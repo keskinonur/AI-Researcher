@@ -18,9 +18,13 @@ import base64
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
 # If you want to use proxy, please uncomment the following lines
-os.environ['https_proxy'] = 'http://100.68.161.73:3128'
-os.environ['http_proxy'] = 'http://100.68.161.73:3128'
-os.environ['no_proxy'] = 'localhost,127.0.0.1,0.0.0.0'
+# Optional proxy configuration: enable only if explicitly requested
+if os.getenv('USE_PROXY', '0') == '1':
+    if os.getenv('HTTPS_PROXY'):
+        os.environ['https_proxy'] = os.getenv('HTTPS_PROXY')
+    if os.getenv('HTTP_PROXY'):
+        os.environ['http_proxy'] = os.getenv('HTTP_PROXY')
+    os.environ['no_proxy'] = os.getenv('NO_PROXY', 'localhost,127.0.0.1,0.0.0.0')
 
 def setup_path():
     # logs_dir = os.path.join("casestudy_results", f'agent_{container_name}', 'logs')
@@ -463,6 +467,14 @@ DEFAULT_ENV_TEMPLATE = """#===========================================
 # (See https://docs.camel-ai.org/key_modules/models.html#)
 #===========================================
 
+# Direct Google Gemini (Google AI Studio)
+PROVIDER=gemini
+COMPLETION_MODEL=gemini/gemini-2.5-pro
+CHEEP_MODEL=gemini/gemini-2.5-flash
+GOOGLE_API_KEY='Your_Google_API_Key'
+# Optional
+GEMINI_API_BASE=https://generativelanguage.googleapis.com/v1beta
+
 # OPENAI API (https://platform.openai.com/api-keys)
 OPENAI_API_KEY='Your_Key'
 # OPENAI_API_BASE_URL=""
@@ -484,8 +496,7 @@ DEEPSEEK_API_KEY='Your_Key'
 # Tools & Services API
 #===========================================
 
-# Google Search API (https://coda.io/@jon-dallas/google-image-search-pack-example/search-engine-id-and-google-api-key-3)
-GOOGLE_API_KEY='Your_Key'
+# Google Custom Search (optional; unrelated to Gemini LLM)
 SEARCH_ENGINE_ID='Your_ID'
 
 # Chunkr API (https://chunkr.ai/)
@@ -780,8 +791,9 @@ def get_api_guide(key: str) -> str:
         return "https://help.aliyun.com/zh/model-studio/developer-reference/get-api-key"
     elif "deepseek" in key_lower:
         return "https://platform.deepseek.com/api_keys"
-    elif "google" in key_lower:
-        return "https://coda.io/@jon-dallas/google-image-search-pack-example/search-engine-id-and-google-api-key-3"
+    elif "google" in key_lower or "gemini" in key_lower:
+        # Google AI Studio (Gemini) API key portal
+        return "https://aistudio.google.com/app/apikey"
     elif "search_engine_id" in key_lower:
         return "https://coda.io/@jon-dallas/google-image-search-pack-example/search-engine-id-and-google-api-key-3"
     elif "chunkr" in key_lower:

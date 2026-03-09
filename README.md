@@ -162,9 +162,11 @@ DOCKER_WORKPLACE_NAME=workplace_paper
 # base image of the research agent
 BASE_IMAGES=tjbtech1/airesearcher:v1
 # completion model name, configuration details see: https://docs.litellm.ai/docs/
-COMPLETION_MODEL=openrouter/google/gemini-2.5-pro-preview-05-20
-# cheep model name, configuration details see: https://docs.litellm.ai/docs/
-CHEEP_MODEL=openrouter/google/gemini-2.5-pro-preview-05-20
+# To use Google Gemini directly via Google AI Studio:
+PROVIDER=gemini
+COMPLETION_MODEL=gemini/gemini-2.5-pro
+# cheap model name
+CHEEP_MODEL=gemini/gemini-2.5-flash
 # specific gpu of the research agent, can be: 
 # '"device=0"' using the first gpu
 # '"device=0,1"' using the first and second gpu
@@ -185,10 +187,14 @@ PLATFORM=linux/amd64
 # ================ llm configuration ================
 # github ai token of the research agent
 GITHUB_AI_TOKEN=your_github_ai_token
-# openrouter api key of the research agent
-OPENROUTER_API_KEY=your_openrouter_api_key
-# openrouter api base url of the research agent
-OPENROUTER_API_BASE=https://openrouter.ai/api/v1
+# Google AI Studio (Gemini) API key
+GOOGLE_API_KEY=your_google_api_key
+# Optional: override Gemini API base
+GEMINI_API_BASE=https://generativelanguage.googleapis.com/v1beta
+
+# (Optional) If you prefer OpenRouter instead of direct Google Gemini:
+# OPENROUTER_API_KEY=your_openrouter_api_key
+# OPENROUTER_API_BASE=https://openrouter.ai/api/v1
 
 # ================ task configuration ================
 # category of the research agent, based on: ./benchmark/final. Can be: 

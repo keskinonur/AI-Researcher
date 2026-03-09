@@ -143,8 +143,10 @@ class MetaChain:
             "tools": tools or None,
             "tool_choice": agent.tool_choice,
             "stream": stream,
-            "base_url": API_BASE_URL,
         }
+        # Only pass base_url when explicitly configured
+        if API_BASE_URL:
+            create_params["base_url"] = API_BASE_URL
 
         if create_params['model'].startswith("mistral"):
             messages = create_params["messages"]

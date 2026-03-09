@@ -36,7 +36,10 @@ class Memory:
             ) 
         # use the OpenAI embedding function if the openai section is set in the configuration.
         if platform == 'OpenAI':
-            openai_client = OpenAI(api_key=api_key or os.environ["OPENAI_API_KEY"], base_url=API_BASE_URL)
+            if API_BASE_URL:
+                openai_client = OpenAI(api_key=api_key or os.environ["OPENAI_API_KEY"], base_url=API_BASE_URL)
+            else:
+                openai_client = OpenAI(api_key=api_key or os.environ["OPENAI_API_KEY"])        
             self.embedder = lambda x: [i.embedding for i in openai_client.embeddings.create(input=x, model=embedding_model).data]
         else:
             # self.embedder = embedding_functions.DefaultEmbeddingFunction()

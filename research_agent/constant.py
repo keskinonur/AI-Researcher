@@ -3,6 +3,22 @@ from dotenv import load_dotenv
 import global_state
 
 load_dotenv()  # 加载.env文件
+
+# --- Provider/env normalization ---------------------------------------------
+# Allow users to set GOOGLE_API_KEY and have LiteLLM pick it up as GEMINI_API_KEY
+if os.getenv("GOOGLE_API_KEY") and not os.getenv("GEMINI_API_KEY"):
+    os.environ["GEMINI_API_KEY"] = os.getenv("GOOGLE_API_KEY", "")
+
+# Normalize model naming for LiteLLM when using Gemini directly
+_provider = os.getenv("PROVIDER", "").lower()
+if _provider == "gemini":
+    _cm = os.getenv("COMPLETION_MODEL")
+    if _cm and "/" not in _cm:
+        # Prefix with provider for LiteLLM routing, e.g. gemini/gemini-2.5-pro
+        os.environ["COMPLETION_MODEL"] = f"gemini/{_cm}"
+    _cheap = os.getenv("CHEEP_MODEL")
+    if _cheap and "/" not in _cheap:
+        os.environ["CHEEP_MODEL"] = f"gemini/{_cheap}"
 # utils: 
 def str_to_bool(value):
     """convert string to bool"""
@@ -36,9 +52,9 @@ LOG_PATH = global_state.LOG_PATH
 EVAL_MODE = str_to_bool(os.getenv('EVAL_MODE', False))
 BASE_IMAGES = os.getenv('BASE_IMAGES', "tjbtech1/paperapp:latest")
 
-COMPLETION_MODEL = os.getenv('COMPLETION_MODEL', "gpt-4o-2024-08-06") # gpt-4o-2024-08-06
+COMPLETION_MODEL = os.getenv('COMPLETION_MODEL', "gemini/gemini-2.5-pro")
 EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL', "text-embedding-3-small")
-CHEEP_MODEL = os.getenv('CHEEP_MODEL', "gpt-4o-mini-2024-07-18")
+CHEEP_MODEL = os.getenv('CHEEP_MODEL', "gemini/gemini-2.5-flash")
 # BASE_URL = os.getenv('BASE_URL', None)
 
 # GPUS = os.getenv('GPUS', "all")
@@ -63,5 +79,4 @@ if EVAL_MODE:
 # if "deepseek" in COMPLETION_MODEL:
 #     os.environ["http_proxy"] = "http://127.0.0.1:7890"
 #     os.environ["https_proxy"] = "http://127.0.0.1:7890"
-
 

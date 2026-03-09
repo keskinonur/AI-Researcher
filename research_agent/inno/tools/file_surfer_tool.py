@@ -224,7 +224,10 @@ Please answer my question based on the content.
         msg = [{"role": "user", "content": [
             {"type": "text", "text": wrap_ques}
         ]}]
-        res = completion(model=COMPLETION_MODEL, messages=msg, base_url=API_BASE_URL)
+        kwargs = {"model": COMPLETION_MODEL, "messages": msg}
+        if API_BASE_URL:
+            kwargs["base_url"] = API_BASE_URL
+        res = completion(**kwargs)
         answer = res.choices[0].message.content
         return answer
     except FileNotFoundError as e:
